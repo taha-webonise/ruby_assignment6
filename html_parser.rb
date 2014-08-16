@@ -45,7 +45,3 @@ CSV.open("users.csv","w") do |data|
     data << content
   end
 end
-
-file_name = "users.csv"
-header = CSV.read(file_name,"r")
-class_str = '#!\usr\bin\env ruby'
