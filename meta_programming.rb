@@ -4,7 +4,6 @@ require 'active_support/core_ext/string'
 
 binding = IRB.conf[:MAIN_CONTEXT].workspace.binding
 
-# file_name = "users.csv"
 print "Please enter csv file name: "
 file_name = $stdin.gets.chomp
 contents = CSV.read(file_name, "r")
