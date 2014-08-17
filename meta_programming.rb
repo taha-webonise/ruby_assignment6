@@ -26,12 +26,10 @@ end
 class_name = file_name.split(".")[0].capitalize.singularize
 create(class_name, *header_s)
 
-obj_array = []
 obj = class_name.downcase
 contents.each_with_index do |content, index|
   eval("#{obj}#{index+1} = #{class_name}.new", binding)
   header_s.zip(content).each do |var_name, value|
     eval("#{obj}#{index+1}.#{var_name} = #{value.inspect}", binding)
   end
-  obj_array.push(eval("#{obj}#{index+1}", binding))
 end
