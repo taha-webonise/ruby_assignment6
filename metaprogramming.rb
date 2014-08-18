@@ -22,12 +22,12 @@ def create(class_name, *args)
     end
     define_method(:save) do |collection|
       document = Hash[self.instance_variables.collect {|name| [name, self.instance_variable_get(name)]}]
-      #exists = collection.find_one("key"=> "value")
-      #if exists.nil?
+      exists = collection.find_one("@email"=> self.instance_variable_get("@email"))
+      if exists.nil?
         collection.insert(document)
-      #else
-      #  exists.update(document)
-      #end
+      else
+        exists.update(document)
+      end
     end
   end
   Object.const_set class_name, instance
@@ -39,6 +39,9 @@ create(class_name, *header_s)
 obj = class_name.downcase
 mongo_client = Mongo::MongoClient.new("localhost", 27017)
 db = mongo_client.db("test")
+if db.collection_names.include? class_name
+  db.drop_collection class_name
+end
 collection = db.collection(class_name)
 contents.each_with_index do |content, index|
   eval("#{obj}#{index+1} = #{class_name}.new", binding)
