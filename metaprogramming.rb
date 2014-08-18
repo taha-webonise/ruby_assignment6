@@ -9,6 +9,7 @@ print "Please enter csv file name: "
 file_name = $stdin.gets.chomp
 contents = CSV.read(file_name, "r")
 header = contents.shift
+
 header_s = []
 header.each do |h|
   header_s.push(h.downcase.tr(" ", "_"))
