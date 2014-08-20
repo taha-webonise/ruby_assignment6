@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 require 'csv'
-require 'active_support/core_ext/string'
 require 'mongo'
 
 binding = IRB.conf[:MAIN_CONTEXT].workspace.binding
@@ -34,7 +33,7 @@ def spawn_class(class_name, *args)
         document_exists.update(document)
         collection.save document_exists
       end
-    end
+    end    
   end
   Object.const_set class_name, instance
 end
@@ -53,17 +52,30 @@ def create_collection(class_name)
   collection = db.collection(class_name)
 end
 
-class_name = file_name.split(".")[0].capitalize.singularize
+def get_class_name_from_file_name(file_name)
+  class_name = ""
+  words = file_name.split(".")[0].split("_")
+  words.each do |word|
+    class_name += word.capitalize
+  end
+  class_name = class_name[0..-2]
+end
+
+class_name = get_class_name_from_file_name file_name
 spawn_class(class_name, *header_s)
 obj = class_name.downcase
 collection = create_collection(class_name)
 
 contents.each_with_index do |content, index|
   eval("#{obj}#{index+1} = #{class_name}.new", binding)
-
   header_s.zip(content).each do |var_name, value|
     eval("#{obj}#{index+1}.#{var_name} = #{value.inspect}", binding)
   end
-
   eval("#{obj}#{index+1}.save_object(collection)", binding)
 end
+
+#class_eval(:initialize) do |*vars|
+    #  args.zip(vars).each do |var_name, attribute|
+    #    eval("@#{var_name} = #{attribute}", binding)
+    #  end
+    #end
